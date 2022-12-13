@@ -1,0 +1,37 @@
+// 服务器与客户端通用消息
+syntax = "proto3";
+package common;
+//  消息格式说明：
+//  * package 和 java_outer_classname 保持一致性，为类的名字
+//
+//  * 所有消息为驼峰命名法，命令字即为消息的名字。
+//    比如：
+//    UserLoginRequest 消息command：UserLoginRequest
+//    UserLoginResponse 消息command：UserLoginResponse
+//    UserChatPushNotify 消息command：UserChatPushNotify
+//
+
+option java_package = "kuaishou.dwai.core.message";
+option java_outer_classname = "GameCommonMsg";
+
+
+//基础数据包的封装
+//数据流格式为：包头(4个字节) +  GeneralStreamMessage
+//注意：包头包括自身
+message GeneralStreamMessage {
+    string command  = 1;
+    int64 seqId    = 2;    //消息序号
+    bytes msgData  = 3;    //消息内容
+}
+
+
+//错误提示
+message ErrorPushNotify {
+    ErrorCode errorCode     = 1;
+}
+
+
+enum ErrorCode {
+    INTERVAL = 0; //空（占位）
+    RE_LOGIN = 1; //需要重新登录
+}

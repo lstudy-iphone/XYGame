@@ -1,0 +1,289 @@
+syntax = "proto3";
+package game;
+option java_package = "kuaishou.dwai.message";
+option java_outer_classname = "GameBattleMsg";
+
+
+//通知进入战场
+//流程是：匹配 -（等待）通知进入战场 - 请求进入战场（loading）- ready - begin比赛开始
+message BattleEnterPushNotify {
+    string battleId     = 1;        //战场ID
+}
+
+
+//请求进入战场
+message BattleEnterRequest {
+    string battleId             = 1; //战场实例id
+}
+
+
+message BattleEnterResponse {
+    string errorInfo            = 1; //错误信息，如果有弹板提示，并返回到匹配界面
+    int32 length                = 2; //地图长(像素)
+    int32 width                 = 3; //地图宽(像素)
+    Self self                   = 4; //自身
+    repeated Player players     = 5; //其他玩家信息
+    int32 walkFrameTime         = 6; //移动同步的间隔时间：100毫秒同步一次。客户端用此计算速度。
+    int32 snakePartSpace        = 7; //蛇身的间距
+}
+
+
+//客户端加载完毕
+message BattleReadyRequest{
+}
+message BattleReadyResponse {
+}
+
+//战斗开始(广播所有人)
+message BattleBeginPushNotify {
+    repeated Player players     = 1; //其他玩家信息
+    repeated Energy energies    = 2; //能量点
+}
+
+
+//行走
+message BattleWalkRequest {
+    float rx                 = 1;    //摇杆坐标
+    float ry                 = 2;
+    repeated Point points    = 3;   //头部的移动轨迹
+}
+
+
+//行走广播
+message BattleWalkPushNotify {
+    sint64   uid                = 1;    //玩家
+    repeated Point points       = 2;    //头部的移动轨迹
+}
+
+// 蛇身发生变化
+// 给自己同步(长度、速度、击杀数)
+// 给其他玩家同步(长度)
+message BattleSnakeChangePushNotify {
+    sint64   uid                = 1;    //玩家
+    repeated Attr attrs         = 2;    //变更属性
+}
+
+message Attr {
+    AttrType attrType   = 1;
+    int32   value       = 2;
+}
+
+enum AttrType {
+    TYPE_INVALID    = 0; //非法
+    LENGTH          = 1; //蛇身长度
+    SPEED           = 2; //速度
+    KILL_COUNT      = 3; //击杀数
+}
+
+
+//通知有人进入房间
+message BattleOtherEnterPushNotify {
+    Player players     = 1; //其他玩家信息
+}
+
+
+
+//玩家请求离开房间
+message BattleLeaveRequest {
+}
+message BattleLeaveResponse {
+}
+
+
+//广播有玩家离开房间
+message BattleLeavePushNotify {
+    int64   uid     = 1;    //离开玩家ID
+}
+
+
+//广播死亡消息
+message BattleDeathPushNotify {
+    sint64  uid                 = 1;  //死亡者
+    repeated  Energy energies   = 2;  //能量点
+    enum Type {
+        DEATH_ERROR     = 0; //占位，避免没赋值，默认发送此值
+        COLLISION       = 1; //撞墙死
+        KILLED          = 2; //被杀
+    }
+    Type deathType          = 3; //死亡方式
+    string killerName       = 4; //凶手(撞墙死，凶手为自己)
+    int32 reviveCount       = 5; //剩余复活次数
+    int32 snakeLength       = 6; //蛇身长度
+}
+
+
+//看广告命令
+message BattleLookAdvertReviveRequest {
+}
+message BattleLookAdvertReviveResponse {
+    Self  self    = 1;
+}
+
+
+//广播其他人玩家复活
+message BattleRevivePushNotify {
+    Player player      = 1;
+}
+
+
+//系统刷新能量点
+message BattleFlushEnergyPushNotify {
+    repeated  Energy energies = 1;  //能量点
+}
+
+//吃能量豆
+message BattleTakeEnergyPushNotify {
+    repeated sint64   energyIds      = 1 [packed=true]; //能量点实例ID
+    sint64   uid                     = 2; //获取能量点的玩家id
+}
+
+
+//请求比赛结算
+message BattleOverRequest{
+}
+
+
+//比赛结算
+message BattleOverResponse {
+    int32   length      = 1; //最终长度
+    int32   killCount   = 2; //击杀数
+    int32   surpass     = 3; //全球超越百分数
+}
+
+
+// 蛇身加速
+message BattleSnakeSpeedUpRequest {
+    enum OpType {
+        ERROR   = 0;
+        SPEED   = 1;
+        STOP    = 2;
+    }
+    OpType  op      = 1;    //操作
+}
+
+message BattleSnakeSpeedUpResponse {
+}
+
+
+//蛇身效果
+message BattleSnakeEffectPushNotify {
+    enum OpType {
+        ERROR       = 0;    //默认值占位
+        ADD         = 1;    //添加
+        REMOVE      = 2;    //删除
+    }
+
+    OpType  op      = 1; //操作类型
+    int64   uid     = 2;
+
+    enum EffectType {
+        ILLEGAL     = 0;    //默认值占位
+        SPEED       = 1;    //加速
+        PROTECT     = 2;    //保护
+    }
+    EffectType effect   = 3;    //效果类型
+}
+
+
+//击杀广播
+message BattleKillBroadcastPushNotify {
+    string killName     = 1;    //击杀者
+    string deathName    = 2;    //死亡者
+    enum KillType {
+        KILL    = 0;    //普通击杀
+        FIRST   = 1;    //一血
+        THREE   = 2;    //三杀
+        FOUR    = 3;    //四杀
+        FIVE    = 5;    //五杀
+        SIX     = 6;    //杀人如麻
+        SEVEN   = 7;    //如神一般
+        EIGHT   = 8;    //超神
+        STOP    = 9;    //终结
+        CRAZY   = 10;   //疯狂杀戮
+        RUNAWAY = 11;   //暴走
+    }
+    KillType killType    = 3;   //击杀类型
+}
+
+
+//排行榜
+message BattleRankPushNotify {
+    RankItem dayBest            = 1;   //今日最佳
+    repeated RankItem ranks     = 2;   //排行列表
+}
+
+// *********************  单机版 ******************* //
+// 皮肤解锁在game_user
+
+// 玩家战场信息
+message UserBattleMsgRequest {
+    int32       length      = 1; // 蛇身长度
+    int32       killCount   = 2;
+}
+
+message UserBattleMsgResponse {
+    int32       length      = 1; // 蛇身长度
+    int32       killCount   = 2;
+}
+
+// 玩家复活请求
+message UserReviveRequest {
+
+}
+
+message UserReviveResponse {
+    int32       result       = 1;
+    int32       coin         = 2;
+}
+
+// 单机版结束游戏
+message GameOverRequest {
+    int32   length      = 1; //最终长度
+    int32   killCount   = 2; //击杀数
+    int32   lookAdCount = 3; //看广告复活次数
+}
+message GameOverResponse {
+    int32   length      = 1; //最终长度
+    int32   killCount   = 2; //击杀数
+    int32   surpass     = 3; //全球超越百分数
+    int32   coin        = 4; // 获得金币
+    bool    isShare     = 5; // true可分享
+    string  lookAdRewardsKey    = 6; //看广告奖励KEY
+}
+
+// *********************  结构体 ******************* //
+message Self {
+    int32   snakeLength     = 1;    //蛇身长
+    string  skinId          = 2;    //皮肤ID
+    repeated Point points   = 3;    //蛇身坐标
+    int32 snakeSpeed        = 4;    //蛇身移动速度
+}
+
+//用户结构体
+message Player {
+    sint64   uid        = 1;
+    string  name        = 2; //名称
+    string  skinId      = 3; //皮肤ID
+    int32   snakeLength     = 4;    //蛇身长
+    repeated Point points   = 5; //蛇身坐标
+}
+
+
+message Point {
+    float px     = 1;
+    float py     = 2;
+}
+
+
+message Energy {
+    sint64   instanceId      = 1; //实例ID 全局唯一（负数）
+    Point   point            = 2; //像素位置
+    int32   value            = 3; //能量值
+}
+
+message RankItem {
+    int64   uid         = 1;
+    string name         = 2;
+    int32 snakeLength   = 3;
+    int32 weekSnakeLength = 4;
+}
