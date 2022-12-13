@@ -1,0 +1,28 @@
+{
+  "name": "XYGame",
+  "uuid": "115ddc48-6ca5-4db3-bc3f-dc38e6de893b",
+  "version": "3.6.2",
+  "creator": {
+    "version": "3.6.2"
+  },
+  "devDependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@types/node": "^18.11.10",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-es2015-for-of": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babelify": "^8.0.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "buffer": "^5.1.0",
+    "javascript-state-machine": "^3.1.0",
+    "js-base64": "^2.4.9",
+    "node": "^19.2.0",
+    "protobufjs": "^6.8.8"
+  },
+  "scripts": {
+    "build-proto:pbjs": "pbjs --dependency protobufjs/minimal.js --target static-module --wrap commonjs --out ./Proto.js/proto.js ./Proto/*.proto",
+    "build-proto:pbts": "pbts --main --out ./Proto.js/proto.d.ts ./Proto.js/*.js"
+  }
+}
