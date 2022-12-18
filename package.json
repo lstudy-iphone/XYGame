@@ -1,17 +1,6 @@
 {
-  "name": "XYGame",
-  "uuid": "115ddc48-6ca5-4db3-bc3f-dc38e6de893b",
-  "version": "3.6.2",
   "creator": {
-    "version": "3.6.2"
-  },
-  "devDependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "@types/node": "^18.11.10",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-es2015-for-of": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "babelify": "^8.0.0"
+    "version": "3.5.2"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -21,8 +10,19 @@
     "node": "^19.2.0",
     "protobufjs": "^6.8.8"
   },
+  "devDependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@types/node": "^18.11.10",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-es2015-for-of": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babelify": "^8.0.0"
+  },
+  "name": "XYGame",
   "scripts": {
     "build-proto:pbjs": "pbjs --dependency protobufjs/minimal.js --target static-module --wrap commonjs --out ./Proto.js/proto.js ./Proto/*.proto",
     "build-proto:pbts": "pbts --main --out ./Proto.js/proto.d.ts ./Proto.js/*.js"
-  }
+  },
+  "uuid": "115ddc48-6ca5-4db3-bc3f-dc38e6de893b",
+  "version": "3.5.2"
 }
