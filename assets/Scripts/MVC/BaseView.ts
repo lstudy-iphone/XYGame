@@ -33,9 +33,12 @@ export class BaseView extends Component {
     maskOpacity:number = 150;
 
     @property
-    _model:BaseModel;
+    _model:BaseModel = null;
     get model(){
         return this._model;
+    }
+    set model(value){
+        this._model = value;
     }
 
     onLoad(){

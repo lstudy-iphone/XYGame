@@ -29,9 +29,9 @@ export class LoadResManager{
             return this.bundleLoaders[bundleName];
         }
         this.bundleLoaders[bundleName] = this.loadBundlePromisify(bundleName).then(bundle => {
+            console.log(`loadBundle ${bundle.name} Loaded!`);
             return bundle;
-        }).catch(()=>{
-            console.log("bundleName-err");
+        }).polyfillFinally(()=>{
             delete this.bundleLoaders[bundleName];
         })
         return this.bundleLoaders[bundleName];

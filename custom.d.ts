@@ -14,4 +14,8 @@ interface Window {
 }
 declare var xygame:XYGame;
 
+interface Promise<T>{
+   polyfillFinally(onFinally: Function): Promise<any>;
+}
+
 
