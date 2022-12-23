@@ -45,7 +45,7 @@ interface LoadResManager{
 }
 
 type XYGame = {
-  EveManger:EventManger;
+  EventManger:EventManger;
   LoadManager:LoadResManager;
 }
 interface Window {
