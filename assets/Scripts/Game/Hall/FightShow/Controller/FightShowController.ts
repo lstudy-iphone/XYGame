@@ -4,15 +4,15 @@ const { ccclass, property } = _decorator;
 
 @ccclass('FightShowController')
 export class FightPlayController extends Component {
-    view:FightView;
+    _view:FightView;
     start() {
-        this.view = this.node.getComponent(FightView);
-        this.view.initPlayers();
+        this._view = this.node.getComponent(FightView);
+        this._view.initPlayers();
         
     }
 
     getPlayer(grid){
-        return this.view.getPlayer(grid);
+        return this._view.getPlayer(grid);
     }
 
     onFightAction(){
