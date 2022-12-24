@@ -10,7 +10,6 @@ export class FightView extends Component {
     camp:Map<number,FightPlayer>;
     beCamp:Map<number,FightPlayer>;
     start() {
-        console.log(this.node.getPosition());
     }
 
     onLoad(){
